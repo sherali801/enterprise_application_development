@@ -1,0 +1,132 @@
+﻿
+
+@{
+    ViewBag.Title = "New User";
+}
+
+@section navbar {
+    @Html.Partial("_NavbarPublic")
+}
+
+<div class="col-6 mx-auto">
+    @{
+        if (ViewBag.Status != null)
+        {
+            if (!ViewBag.Status)
+            {
+                <div class="alert alert-danger">
+                    @foreach (string message in ViewBag.Messages)
+                    {
+                        @message<br />
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-success">
+                    @foreach (string message in ViewBag.Messages)
+                    {
+                        @message<br />
+                    }
+                </div>
+            }
+        }
+    }
+</div>
+
+<form action="@Url.Content("~/User/CreateUser")" method="post" enctype="multipart/form-data">
+    <fieldset class="form-group">
+        <legend class="text-center">New User</legend>
+        <div class="form-group row">
+            <label class="form-control-label col-4 col-form-label text-right" for="name">Name</label>
+            <div class="col-4">
+                <input class="form-control" type="text" name="name" value="@ViewBag.Name" id="name" placeholder="Name" aria-describedby="nameHelp" maxlength="50" required autofocus>
+                <small id="nameHelp" class="form-text text-muted">At max 50 character long.</small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="form-control-label col-4 col-form-label text-right" for="login">Login</label>
+            <div class="col-4">
+                <input class="form-control" type="text" name="login" value="@ViewBag.Login" id="login" placeholder="Login" aria-describedby="loginHelp" maxlength="50" required>
+                <small id="loginHelp" class="form-text text-muted">At max 50 character long.</small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="form-control-label col-4 col-form-label text-right" for="password">Password</label>
+            <div class="col-4">
+                <input class="form-control" type="password" name="password" value="@ViewBag.Password" id="password" placeholder="Password" aria-describedby="passwordHelp" minlength="8" maxlength="15" required>
+                <small id="passwordHelp" class="form-text text-muted">8-15 characters, contain letters, numbers, special characters.</small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="email" class="form-control-label col-4 col-form-label text-right">Email</label>
+            <div class="col-4">
+                <input class="form-control" type="email" name="email" value="@ViewBag.Email" id="email" placeholder="Email" maxlength="255" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="image" class="form-control-label col-4 col-form-label text-right">Image</label>
+            <div class="col-4 mt-1">
+                <input class="form-control-file" type="file" name="image" id="image" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="gender" class="form-control-label col-4 col-form-label text-right">Gender</label>
+            <div class="col-4">
+                <select class="form-control" name="gender" id="gender" required>
+                    <option value="0">--Select--</option>
+                    <option value="M" @if (ViewBag.Gender == "M") { <text>selected</text> }>Male</option>
+                    <option value="F" @if (ViewBag.Gender == "F") { <text>selected</text> }>Female</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="address" class="form-control-label col-4 col-form-label text-right">Address</label>
+            <div class="col-4">
+                <textarea name="address" class="form-control" id="address" rows="3" placeholder="Address" aria-describedby="addressHelp" maxlength="50" required>@ViewBag.Address</textarea>
+                <small id="addressHelp" class="form-text text-muted">At max 50 character long.</small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="age" class="form-control-label col-4 col-form-label text-right">Age</label>
+            <div class="col-4">
+                <input class="form-control" type="number" name="age" value="@ViewBag.Age" id="age" placeholder="Age" min="1" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="form-control-label col-4 col-form-label text-right" for="nic">NIC</label>
+            <div class="col-4">
+                <input class="form-control" type="text" name="nic" value="@ViewBag.NIC" id="nic" placeholder="NIC" aria-describedby="nicHelp" required>
+                <small id="nicHelp" class="form-text text-muted">xxxxx-xxxxxxx-x</small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="form-control-label col-4 col-form-label text-right" for="dob">DOB</label>
+            <div class="col-4">
+                <input class="form-control" type="date" name="dob" value="@ViewBag.DOB" id="dob" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="form-control-label col-4 col-form-label text-right">Sports</label>
+            <div class="col-4 mt-2">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="cricket" id="cricket" @if (ViewBag.Cricket == "on") { <text>checked</text> }>
+                    <label class="form-check-label" for="cricket">Cricket</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="hockey" id="hockey" @if (ViewBag.Hockey == "on") { <text>checked</text> }>
+                    <label class="form-check-label" for="hockey">Hockey</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="chess" id="chess" @if (ViewBag.Chess == "on") { <text>checked</text> }>
+                    <label class="form-check-label" for="chess">Chess</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="offset-sm-4 col-4">
+                <input class="btn btn-block btn-primary" type="submit" name="submit" value="Create">
+            </div>
+        </div>
+    </fieldset>
+</form>

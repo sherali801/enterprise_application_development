@@ -1,0 +1,36 @@
+﻿@model List<DataTransferObjects.UserDTO>
+
+@{ 
+	ViewBag.Title = "Admin Home";
+}
+
+@section navbar {
+	@Html.Partial("_NavbarAdmin");
+}
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>UserID</th>
+			<th>Name</th>
+			<th>Login</th>
+			<th>Address</th>
+			<th>Age</th>
+			<th>Action</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var userDTO in Model)
+		{
+			<tr>
+				<td>@userDTO.UserID</td>
+				<td>@userDTO.Name</td>
+				<td>@userDTO.Login</td>
+				<td>@userDTO.Address</td>
+				<td>@userDTO.Age</td>
+				<td><a href="@Url.Content("~/Admin/EditUser/" + userDTO.UserID)" class="btn btn-primary">Edit</a></td>
+			</tr>
+
+		}
+	</tbody>
+</table>

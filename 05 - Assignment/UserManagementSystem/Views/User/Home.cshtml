@@ -1,0 +1,11 @@
+﻿@{ 
+    ViewBag.Title = "Home";
+}
+
+@section navbar {
+    @Html.Partial("_NavbarUser")
+}
+
+<h2>Welcome @ViewBag.Name</h2>
+
+<img src="@Url.Content(@ViewBag.ImageName)" class="img-thumbnail rounded float-right" width="200px"  height="200px" />
