@@ -1,0 +1,5 @@
+D:\Workspace\Visual Studio\ead_s18_a7_bcsf15m012\DBPractice\Helper\bin\Debug\Helper.dll
+D:\Workspace\Visual Studio\ead_s18_a7_bcsf15m012\DBPractice\Helper\bin\Debug\Helper.pdb
+D:\Workspace\Visual Studio\ead_s18_a7_bcsf15m012\DBPractice\Helper\obj\Debug\Helper.csprojResolveAssemblyReference.cache
+D:\Workspace\Visual Studio\ead_s18_a7_bcsf15m012\DBPractice\Helper\obj\Debug\Helper.dll
+D:\Workspace\Visual Studio\ead_s18_a7_bcsf15m012\DBPractice\Helper\obj\Debug\Helper.pdb

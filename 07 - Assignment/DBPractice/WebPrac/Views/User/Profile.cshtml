@@ -1,0 +1,13 @@
+﻿@model PMS.Entities.UserDTO
+
+@{
+	ViewBag.Title = "Profile";
+	Layout = "~/Views/Shared/_MyPublicLayout.cshtml";
+}
+
+<div class="card text-center mb-2 mx-auto" style="max-width: 30rem;">
+	<img class="card-img-top" src='@Url.Content("~/userpics/" + Model.PictureName)' alt="@Model.Name">
+	<div class="card-body">
+		<h5 class="card-title">Name: @Model.Name</h5>
+	</div>
+</div>

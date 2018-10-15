@@ -1,0 +1,61 @@
+﻿@model List<PMS.Entities.ProductDTO>
+
+@{
+	ViewBag.Title = "All Products";
+	Layout = "~/Views/Shared/_MyProductLayout.cshtml";
+}
+
+@section scripts{
+
+	<script>
+		$(document).ready(function () {
+			$(".editbutton").click(function () {
+				$("#ProductID").val($(this).attr("pid"));
+			});
+		});
+	</script>
+
+}
+
+<h2 class="text-center">Products</h2>
+
+<form action='@Url.Content("~/Product/Edit2")' method="post">
+	@foreach (var item in Model)
+	{
+		<div class="mb-3">
+			<div class="card text-center mb-2 mx-auto" style="max-width: 30rem;">
+				<img class="card-img-top" src='@Url.Content("~/UploadedFiles/" + item.PictureName)' alt="@item.Name">
+				<div class="card-body">
+					<h5 class="card-title">ID: @item.ProductID</h5>
+					<h5 class="card-title">Name: @item.Name</h5>
+					<h5 class="card-title">Price: @item.Price</h5>
+					@if (WebPrac.Security.SessionManager.User.IsAdmin || item.CreatedBy == WebPrac.Security.SessionManager.User.UserID)
+					{
+						<a href='@Url.Content("~/Product/Edit/" + item.ProductID)' class="card-link">Edit</a>
+						<a href='@Url.Content("~/Product/Delete/" + item.ProductID)' class="card-link" onclick="return confirm('Are you sure?');">Delete</a>
+					}
+				</div>
+				<div class="card-footer">
+					<small class="text-muted">@item.CreatedOn By @item.NameofCreator</small>
+				</div>
+			</div>
+			@if (item.Comments.Count > 0)
+			{
+				<h2 class="text-center">Comments</h2>
+			}
+			@foreach (var comment in item.Comments)
+			{
+				<div class="card text-center mb-2 mx-auto" style="width: 30rem;">
+					<img class="card-img-top" src='@Url.Content("~/userpics/" + comment.PictureName)' width="200" height="200" />
+					<div class="card-body">
+						<h5 class="card-title"></h5>
+						<p class="card-text">@comment.CommentText</p>
+					</div>
+					<div class="card-footer">
+						<small class="text-muted">At @comment.CommentOn.ToShortDateString() by <a class="btn btn-link" href='@Url.Content("~/User/Profile/" + comment.UserID)' target="_blank">@comment.UserName</a></small>
+					</div>
+				</div>
+			}
+		</div>
+	}
+</form>

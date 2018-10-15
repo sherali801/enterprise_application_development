@@ -1,0 +1,42 @@
+﻿@model PMS.Entities.UserDTO
+
+@{
+	ViewBag.Title = "Edit Profile";
+	Layout = "~/Views/Shared/_MyProductLayout.cshtml";
+}
+
+<form action="@Url.Content("~/User/Edit")" method="post" enctype="multipart/form-data">
+	<fieldset class="form-group">
+		<legend class="text-center">Edit Profile</legend>
+		<input type="hidden" name="UserID" value="@Model.UserID" />
+		<div class="form-group row">
+			<label class="form-control-label col-4 col-form-label text-right" for="Name">Name</label>
+			<div class="col-4">
+				<input class="form-control" type="text" name="Name" value="@Model.Name" id="Name" placeholder="Name" required autofocus>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="form-control-label col-4 col-form-label text-right" for="Login">Login</label>
+			<div class="col-4">
+				<input class="form-control" type="text" name="Login" value="@Model.Login" id="Login" placeholder="Login" required>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="offset-4 col-4">
+				<img src='@Url.Content("~/userpics/" + Model.PictureName)' class="img-thumbnail rounded" width="200" height="200" />
+			</div>
+		</div>
+		<input type="hidden" name="PictureName" value="@Model.PictureName" />
+		<div class="form-group row">
+			<label class="form-control-label col-4 col-form-label text-right" for="Image">Image</label>
+			<div class="col-4">
+				<input class="form-control-file" type="file" name="Image" id="Image">
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="offset-sm-4 col-4">
+				<input class="btn btn-block btn-outline-primary" type="submit" name="submit" value="Edit Profile">
+			</div>
+		</div>
+	</fieldset>
+</form>
