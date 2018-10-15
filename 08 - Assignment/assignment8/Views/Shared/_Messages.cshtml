@@ -1,0 +1,23 @@
+﻿@{
+	if (ViewBag.Status != null)
+	{
+		if (ViewBag.Status)
+		{
+			<div class="alert alert-success">
+				@foreach (string message in ViewBag.Messages)
+				{
+					@message<br>
+				}
+			</div>
+		}
+		else
+		{
+			<div class="alert alert-danger">
+				@foreach (string message in ViewBag.Messages)
+				{
+					@message<br>
+				}
+			</div>
+		}
+	}
+}

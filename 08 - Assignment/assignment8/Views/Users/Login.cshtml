@@ -1,0 +1,39 @@
+﻿@model DataTransferObjects.UsersDTO
+
+@{
+	ViewBag.Title = "Login";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Navbar {
+	@Html.Partial("_PublicNavbar")
+}
+
+@section Messages {
+	@Html.Partial("_Messages")
+}
+
+<form action='@Url.Content("~/Users/Login")' method="post">
+	<fieldset class="form-group">
+		<legend class="text-center">Login</legend>
+		<div class="form-group row">
+			<label class="form-control-label col-4 col-form-label text-right" for="Login">Login</label>
+			<div class="col-4">
+				<input class="form-control" type="text" name="Login" value="@Model.Login" id="Login" placeholder="Login" aria-describedby="LoginHelp" maxlength="20" required autofocus>
+				<small id="LoginHelp" class="form-text text-muted">At max 20 character long.</small>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="form-control-label col-4 col-form-label text-right" for="Password">Password</label>
+			<div class="col-4">
+				<input class="form-control" type="password" name="Password" value="@Model.Password" id="Password" placeholder="Password" aria-describedby="PasswordHelp" required>
+				<small id="PasswordHelp" class="form-text text-muted">At max 20 character long.</small>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="offset-sm-4 col-4">
+				<input class="btn btn-block btn-primary" type="submit" name="Submit" value="Submit">
+			</div>
+		</div>
+	</fieldset>
+</form>

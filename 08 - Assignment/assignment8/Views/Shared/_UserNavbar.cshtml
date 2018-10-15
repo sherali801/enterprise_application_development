@@ -1,0 +1,31 @@
+﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+	<a class="navbar-brand" href='@Url.Content("~/Home/Index")'>SherDrive</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item">
+				<a class="nav-link" href='@Url.Content("~/Home/Index")'>Home</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" data-toggle="modal" href="#CreateNewFolderModal">Create New Folder</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" data-toggle="modal" href="#UploadFileModal">Upload File</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#" id="DownloadMetaDataDocument">Download MetaData</a>
+			</li>
+		</ul>
+		<ul class="navbar-nav">
+			<li class="nav-item">
+				<a class="nav-link" href='#'>Hi! @ViewBag.UserName</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href='@Url.Content("~/Users/Logout")' id="Logout">Logout</a>
+			</li>
+		</ul>
+	</div>
+</nav>

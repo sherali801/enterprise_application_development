@@ -1,0 +1,439 @@
+﻿
+@{
+	ViewBag.Title = "Home Page";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Navbar {
+	@Html.Partial("_UserNavbar")
+}
+
+<nav aria-label="breadcrumb">
+	<ol class="breadcrumb"></ol>
+</nav>
+<div id="spinner"><img src='@Url.Content("~/Images/spinner.gif")' width="100" height="100" /></div>
+<div class="ParentFolderId"></div>
+<div class="Folders mb-3"></div>
+<div class="Files mb-3"></div>
+
+<div class="modal fade" id="CreateNewFolderModal" tabindex="-1" role="dialog" aria-labelledby="CreateNewFolder" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="CreateNewFolder">Create New Folder</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group row">
+					<label for="FolderName" class="col-sm-2 col-form-label">Name</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="FolderName">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" id="CreateNewFolderSubmit" data-dismiss="modal">Submit</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="UploadFileModal" tabindex="-1" role="dialog" aria-labelledby="UploadFile" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="UploadFile">Upload File</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group row">
+					<label for="File" class="col-sm-2 col-form-label">File</label>
+					<div class="col-sm-10">
+						<input type="file" class="form-control" id="File">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" id="UploadFileSubmit" data-dismiss="modal">Submit</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+
+		$("document").ready(function () {
+
+			$("#spinner").hide();
+
+			localStorage.setItem("UserId", @ViewBag.UserId);
+
+			$("#Logout").click(function () {
+				localStorage.removeItem("UserId");
+				return true;
+			});
+
+			$("#CreateNewFolderSubmit").click(function () {
+				var name = $("#FolderName").val();
+				$("#FolderName").val("");
+				var parentFolderId = $(".ParentFolderId").attr("ParentFolderId");;
+				var userId = localStorage.getItem("UserId");
+				createNewFolder(name, parentFolderId, userId)
+			});
+
+			$("#UploadFileSubmit").click(function () {
+				$("#spinner").show();
+				var parentFolderId = $(".ParentFolderId").attr("ParentFolderId");
+				var userId = localStorage.getItem("UserId");
+				var formData = new FormData();
+				var files = $("#File").get(0).files;
+				if (files.length > 0) {
+					formData.append("File", files[0]);
+				}
+				formData.append("ParentFolderId", parentFolderId);
+				formData.append("CreatedBy", userId);
+				uploadFile(formData, parentFolderId, userId);
+			});
+
+			$("#DownloadMetaDataDocument").click(function (e) {
+				e.preventDefault();
+				var parentFolderId = $(".ParentFolderId").attr("ParentFolderId");
+				var userId = localStorage.getItem("UserId");
+				var url = '@Url.Content("~/api/metadata/downloadmetadatadocument?ParentFolderId=")' + parentFolderId + "&UserId=" + userId;
+				window.location = url;
+			});
+
+			$(".ParentFolderId").attr("ParentFolderId", 1);
+
+			var parentFolderId = $(".ParentFolderId").attr("ParentFolderId");
+			var userId = localStorage.getItem("UserId");
+
+			getFolders(parentFolderId, userId);
+			getFiles(parentFolderId, userId);
+			getNavigation(parentFolderId, userId);
+
+		});
+
+		function getFolders(parentFolderId, userId) {
+			var settings = {
+				type: "POST",
+				dataType: "json",
+				contentType: 'application/json; charset=utf-8',
+				url: '@Url.Content("~/api/folder/getfoldersbyparentfolderidanduserId")',
+				data: JSON.stringify({
+					ParentFolderId: parentFolderId,
+					CreatedBy: userId
+				}),
+				success: function (response) {
+					populateFolders(response);
+				},
+				error: function (response) {
+					console.log(response);
+				}
+			};
+			$.ajax(settings);
+		}
+
+		function populateFolders(folders) {
+			$(".Folders").html("");
+			if (folders.length == 0) {
+				return;
+			}
+			$(".Folders").html("<h3 class='text-center'>Folders</h3>");
+			var divRow = $("<div>");
+			divRow.addClass("row");
+			$(folders).each(function () {
+				var divCol = $("<div>");
+				divCol.addClass("col-3");
+
+				var divCard = $("<div>");
+				divCard.addClass("card");
+				divCard.addClass("mt-2");
+				divCard.addClass("context-menu-folder");
+				divCard.attr("FolderId", this.Id);
+
+				divCard.dblclick(function () {
+					$(".ParentFolderId").attr("ParentFolderId", $(this).attr("FolderId"));
+					var parentFolderId = $(this).attr("FolderId");
+					var userId = localStorage.getItem("UserId");
+
+					getFolders(parentFolderId, userId);
+					getFiles(parentFolderId, userId);
+					getNavigation(parentFolderId, userId);
+				});
+
+				var divCardBody = $("<div>");
+				divCardBody.addClass("card-body");
+				divCardBody.text(this.Name);
+
+				divCard.append(divCardBody);
+
+				divCol.append(divCard);
+
+				divRow.append(divCol);
+			});
+			$(".Folders").append(divRow);
+		}
+
+		function createNewFolder(name, parentFolderId, userId) {
+			var settings = {
+				type: "POST",
+				dataType: "json",
+				contentType: 'application/json; charset=utf-8',
+				url: '@Url.Content("~/api/folder/createfolder")',
+				data: JSON.stringify({
+					Name: name,
+					ParentFolderId: parentFolderId,
+					CreatedBy: userId
+				}),
+				success: function (response) {
+					if (response) {
+						getFolders(parentFolderId, userId);
+					} else {
+						alert("Folder was not created.");
+					}
+				},
+				error: function (response) {
+					console.log(response);
+				}
+			};
+
+			$.ajax(settings);
+		}
+
+		function getFiles(parentFolderId, userId) {
+			var settings = {
+				type: "POST",
+				dataType: "json",
+				contentType: 'application/json; charset=utf-8',
+				url: '@Url.Content("~/api/files/getfilesbyparentfolderidanduserid")',
+				data: JSON.stringify({
+					ParentFolderId: parentFolderId,
+					CreatedBy: userId
+				}),
+				success: function (response) {
+					populateFiles(response);
+				},
+				error: function (response) {
+					console.log(response);
+				}
+			};
+			$.ajax(settings);
+		}
+
+		function populateFiles(files) {
+			$(".Files").html("");
+			if (files.length == 0) {
+				return;
+			}
+			$(".Files").html("<h3 class='text-center'>Files</h3>");
+			var divRow = $("<div>");
+			divRow.addClass("row");
+			$(files).each(function () {
+				var divCol = $("<div>");
+				divCol.addClass("col-3");
+
+				var divCard = $("<div>");
+				divCard.addClass("card");
+				divCard.addClass("mt-2");
+				divCard.addClass("context-menu-file");
+				divCard.attr("FileId", this.Id);
+
+				var cardImg = $("<img>");
+				var url = "/api/files/getthumbnail?id=" + this.Id + "&createdby=" + this.CreatedBy;
+				cardImg.attr("src", url);
+				cardImg.addClass("card-img-top");
+				cardImg.css("width", 286);
+				cardImg.css("height", 180);
+				divCard.append(cardImg);
+
+				var divCardBody = $("<div>");
+				divCardBody.addClass("card-body");
+				divCardBody.text(this.Name);
+
+				divCard.append(divCardBody);
+
+				divCol.append(divCard);
+
+				divRow.append(divCol);
+			});
+			$(".Files").append(divRow);
+		}
+
+		function getNavigation(folderId, userId) {
+			var settings = {
+				type: "POST",
+				dataType: "json",
+				contentType: 'application/json; charset=utf-8',
+				url: '@Url.Content("~/api/folder/getnavigationbyfolderidanduserId")',
+				data: JSON.stringify({
+					Id: folderId,
+					CreatedBy: userId
+				}),
+				success: function (response) {
+					populateNavigation(response);
+				},
+				error: function (response) {
+					console.log(response);
+				}
+			};
+			$.ajax(settings);
+		}
+
+		function populateNavigation(folders) {
+			var navigation = $(".breadcrumb");
+			navigation.html("");
+			/*folders.push({
+				Id: 0,
+				Name: "Home",
+				ParentFolderId: 0
+			});*/
+			folders = folders.reverse();
+			$(folders).each(function () {
+				var li = $("<li>")
+				li.addClass("breadcrumb-item");
+				li.text(this.Name);
+				li.attr("FolderId", this.Id);
+				li.click(function () {
+					$(".ParentFolderId").attr("ParentFolderId", $(this).attr("FolderId"));
+					var parentFolderId = $(this).attr("FolderId");
+					var userId = localStorage.getItem("UserId");
+
+					getFolders(parentFolderId, userId);
+					getFiles(parentFolderId, userId);
+					getNavigation(parentFolderId, userId);
+				});
+				navigation.append(li);
+			});
+		}
+
+		function uploadFile(data, parentFolderId, userId) {
+			var settings = {
+				type: "POST",
+				dataType: "json",
+				url: '@Url.Content("~/api/files/uploadfilebyparentfolderidanduserid")',
+				data: data,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					if (response) {
+						getFiles(parentFolderId, userId);
+					} else {
+						alert("File was not uploaded.");
+					}
+					$("#spinner").hide();
+				},
+				error: function (response) {
+					console.log(response);
+					$("#spinner").hide();
+				}
+			};
+			$.ajax(settings);
+			return false;
+		}
+
+		$(function() {
+			$.contextMenu({
+				selector: '.context-menu-folder',
+				callback: function(key, options) {
+					if (!confirm("Are you sure?")) {
+						return;
+					}
+					var folderId = $(this[0]).attr("FolderId");
+					var parentFolderId = $(".ParentFolderId").attr("ParentFolderId");
+					var userId = localStorage.getItem("UserId");
+					deleteFolder(folderId, parentFolderId, userId);
+				},
+				items: {
+					"delete": {name: "Delete"}
+				}
+			});
+
+		});
+
+		function deleteFolder(folderId, parentFolderId, userId) {
+			var settings = {
+				type: "POST",
+				dataType: "json",
+				contentType: 'application/json; charset=utf-8',
+				url: '@Url.Content("~/api/folder/deletefolderbyfolderidanduserid")',
+				data: JSON.stringify({
+					Id: folderId,
+					CreatedBy: userId
+				}),
+				success: function (response) {
+					if (response) {
+						getFolders(parentFolderId, userId);
+					} else {
+						alert("Folder was not deleted.");
+					}
+				},
+				error: function (response) {
+					console.log(response);
+				}
+			};
+			$.ajax(settings);
+		}
+
+		$(function() {
+			$.contextMenu({
+				selector: '.context-menu-file',
+				callback: function(key, options) {
+					var fileId = $(this[0]).attr("FileId");
+					var parentFolderId = $(".ParentFolderId").attr("ParentFolderId");
+					var userId = localStorage.getItem("UserId");
+					if (key == "download") {
+						downloadFile(fileId, userId);
+					} else if (key == "delete") {
+						if (!confirm("Are you sure?")) {
+							return;
+						}
+						deleteFile(fileId, parentFolderId, userId);
+					}
+				},
+				items: {
+					"download": {name: "Download"},
+					"delete": {name: "Delete"}
+				}
+			});
+
+		});
+
+		function deleteFile(fileId, parentFolderId, userId) {
+			var settings = {
+				type: "POST",
+				dataType: "json",
+				contentType: 'application/json; charset=utf-8',
+				url: '@Url.Content("~/api/files/deletefilebyfileidanduserid")',
+				data: JSON.stringify({
+					Id: fileId,
+					CreatedBy: userId
+				}),
+				success: function (response) {
+					if (response) {
+						getFiles(parentFolderId, userId);
+					} else {
+						alert("File was not deleted.");
+					}
+				},
+				error: function (response) {
+					console.log(response);
+				}
+			};
+			$.ajax(settings);
+		}
+
+		function downloadFile(fileId, userId) {
+			var url = '@Url.Content("~/api/files/downloadfile?id=")' + fileId + "&createdby=" + userId;
+			window.location = url;
+		}
+
+	</script>
+}
